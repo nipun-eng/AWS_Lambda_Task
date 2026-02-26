@@ -1,8 +1,7 @@
 import json
-import os
 from lambda_function import lambda_handler
 
-# Mock event for testing
+# Test with actual URLs
 test_event = {
     'urls': [
         'https://www.instagram.com/nike',
@@ -10,24 +9,24 @@ test_event = {
     ]
 }
 
-# Set environment variable for local testing
-os.environ['S3_BUCKET_NAME'] = 'test-bucket-local'
-
-# Run the handler locally
 if __name__ == '__main__':
-    print("=" * 60)
-    print("TESTING LAMBDA FUNCTION LOCALLY")
-    print("=" * 60)
+    
+    print("TESTING BRAND INSIGHTS LAMBDA")
+    
     
     result = lambda_handler(test_event, None)
     
-    print("\nRESULT:")
-    print(json.dumps(result, indent=2))
-    
-    # Check if any errors
+    # Parse and pretty print the result
     if result.get('statusCode') == 200:
         body = json.loads(result['body'])
-        print(f"\n✅ Success: {body.get('success_count')} URLs processed")
-        print(f"❌ Errors: {body.get('error_count')}")
+        print(f"\n Success! Processed {body['summary']['successful']} URLs")
+        
+        # Show insights for each URL
+        for item in body['results']:
+            if item['status'] == 'success':
+                print(f"\n {item['url']}")
+                print(f"   Tone: {item['data']['brand_psychology']['tone_of_voice']}")
+                print(f"   Values: {item['data']['brand_psychology']['core_values']}")
+                print(f"   Visual: {item['data']['brand_psychology']['visual_identity']}")
     else:
-        print(f"\n❌ Failed: {result}")
+        print(f"\n Failed: {result}")

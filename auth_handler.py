@@ -21,10 +21,10 @@ class LambdaAuthHandler:
             response = self.s3.get_object(Bucket=self.bucket_name, Key=cookie_key)
             cookies = json.loads(response['Body'].read().decode('utf-8'))
             context.add_cookies(cookies)
-            print(f"✅ Loaded {len(cookies)} cookies from S3: {cookie_key}")
+            print(f" Loaded {len(cookies)} cookies from S3: {cookie_key}")
             return True
         except Exception as e:
-            print(f"ℹ️ No saved cookies found for {domain}")
+            print(f"ℹ No saved cookies found for {domain}")
             return False
     
     def save_cookies(self, context, url):
@@ -40,7 +40,7 @@ class LambdaAuthHandler:
                 Body=json.dumps(cookies, indent=2),
                 ContentType='application/json'
             )
-            print(f"💾 Saved {len(cookies)} cookies to S3: {cookie_key}")
+            print(f" Saved {len(cookies)} cookies to S3: {cookie_key}")
         return cookies
     
     def _get_domain_key(self, url):
